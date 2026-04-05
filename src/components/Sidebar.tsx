@@ -40,12 +40,17 @@ const buildTree = (branches: IGitBranch[]): TreeNode => {
   return root
 }
 
-const BranchTreeNode: React.FC<{
+const BranchTreeNode = ({
+  node,
+  level,
+  onCheckout,
+  onContextMenu
+}: {
   node: TreeNode
   level: number
   onCheckout: (b: string) => void
   onContextMenu: (e: React.MouseEvent, b: string) => void
-}> = ({ node, level, onCheckout, onContextMenu }) => {
+}) => {
   const [expanded, setExpanded] = useState(true)
 
   if (node.name === 'root') {
@@ -124,7 +129,7 @@ interface SidebarProps {
   onRebase: (branchName: string) => void
 }
 
-const Sidebar: React.FC<SidebarProps> = ({
+export const Sidebar = ({
   repoPath,
   currentBranch,
   branches,
@@ -132,7 +137,7 @@ const Sidebar: React.FC<SidebarProps> = ({
   onCheckout,
   onMerge,
   onRebase
-}) => {
+}: SidebarProps) => {
   const localBranchesTree = buildTree(branches.filter((b) => !b.isRemote))
   const remoteBranchesTree = buildTree(branches.filter((b) => b.isRemote))
 
@@ -235,5 +240,3 @@ const Sidebar: React.FC<SidebarProps> = ({
     </div>
   )
 }
-
-export default Sidebar

@@ -202,6 +202,12 @@ body {
 }
 
 /* Commit History */
+.commit-view-wrapper {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
 .commit-history-container {
   flex: 1;
   display: flex;
@@ -235,10 +241,6 @@ body {
 .commit-graph-column {
   /* Dynamic width set in TSX */
   position: relative;
-}
-
-.commit-node {
-  /* Removed unused fixed dimensions as they are inline */
 }
 
 /* Commit Content */
@@ -419,45 +421,313 @@ body {
   background: rgba(255, 255, 255, 0.2);
 }
 
-/* Commit Item Expansion */
-.commit-item-wrapper {
-  margin-bottom: 4px;
+/* Commit Details Panel */
+.commit-details-panel {
+  width: 400px;
+  background: var(--bg-panel);
+  border-left: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  z-index: 5;
 }
 
-.commit-item {
+.commit-details-header {
+  padding: 16px 20px;
+  height: 60px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.hash-title {
+  color: var(--text-muted);
+  font-family: 'Menlo', monospace;
+  font-size: 0.85rem;
+}
+
+.commit-details-content {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.commit-info-card {
+  padding: 20px;
+  border-bottom: 1px solid var(--border);
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.commit-info-card .commit-title {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--text-main);
+  margin-bottom: 12px;
+}
+
+.commit-info-card .commit-body {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  white-space: pre-wrap;
+  margin-bottom: 16px;
+  line-height: 1.5;
+}
+
+.commit-author-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--bg-color);
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+}
+
+.commit-author-card .avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  color: white;
+}
+
+.author-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.author-name-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.9rem;
+  color: var(--text-main);
+}
+
+.parent-hash {
+  font-family: 'Menlo', monospace;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+}
+
+.author-date {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+/* Files Section */
+.files-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.files-header {
+  padding: 16px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--border);
+}
+
+.files-count {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text-main);
+}
+
+.files-toggles {
+  display: flex;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 6px;
+  padding: 2px;
+}
+
+.toggle-btn {
+  background: transparent;
+  border: none;
+  padding: 4px 12px;
+  border-radius: 4px;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.toggle-btn.active {
+  background: var(--primary);
+  color: white;
+}
+
+.toggle-btn.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.files-list {
+  flex: 1;
+  padding: 10px 0;
+  overflow-y: auto;
+}
+
+.files-loading {
+  padding: 20px;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+.file-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 6px 20px;
+  font-size: 0.85rem;
   cursor: pointer;
 }
 
-.commit-item.expanded {
+.file-item:hover {
   background: rgba(255, 255, 255, 0.05);
-  border-bottom-left-radius: 0;
-  border-bottom-right-radius: 0;
 }
 
-.expand-icon {
-  margin-left: auto;
+.file-path {
+  color: var(--text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.status-m { color: #f59e0b; }
+.status-a { color: #10b981; }
+.status-d { color: #ef4444; }
+.status-r { color: #8b5cf6; }
+.status-u { color: var(--text-muted); }
+
+.commit-item.selected {
+  background: rgba(99, 102, 241, 0.15);
+}
+
+.wip-commit {
+  border: 1px dashed rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.03);
+  margin-bottom: 8px;
+}
+
+.wip-commit:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.wip-commit .commit-node {
+  border: 2px dashed var(--bg-color) !important;
+}
+
+.wip-commit .commit-hash {
+  color: var(--primary);
+  font-weight: 600;
+}
+
+.icon-folder {
   color: var(--text-muted);
 }
 
-.commit-diff-panel {
-  background: rgba(0, 0, 0, 0.2);
-  padding: 16px;
-  border-bottom-left-radius: 8px;
-  border-bottom-right-radius: 8px;
-  border: 1px solid var(--border);
-  border-top: none;
-  font-family: 'Menlo', monospace;
-  font-size: 0.8rem;
-  color: #cad3f5;
-  overflow-x: auto;
+.diff-viewer-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: var(--bg-color);
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
 }
 
-.diff-text {
-  white-space: pre;
+.diff-viewer-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
 }
 
-.diff-loading {
+.diff-viewer-topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 24px;
+  background-color: var(--panel-bg);
+  border-bottom: 1px solid var(--border);
+}
+
+.diff-file-path {
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-color);
+}
+
+.diff-hash {
   color: var(--text-muted);
-  font-family: 'Inter', sans-serif;
-  font-style: italic;
+  font-weight: normal;
+  margin-left: 8px;
+}
+
+.diff-close-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.diff-close-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-color);
+}
+
+.diff-content {
+  flex: 1;
+  overflow: auto;
+  padding: 24px;
+  background-color: var(--bg-color);
+}
+
+.diff-text-area {
+  font-family: 'JetBrains Mono', 'Fira Code', Consolas, monospace;
+  font-size: 13px;
+  line-height: 1.5;
+  margin: 0;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+.diff-line {
+  padding: 0 8px;
+  min-height: 19px;
+}
+
+.diff-line-add {
+  background-color: rgba(46, 160, 67, 0.15);
+  color: #7ee787;
+}
+
+.diff-line-remove {
+  background-color: rgba(248, 81, 73, 0.15);
+  color: #ff7b72;
+}
+
+.diff-line-header {
+  color: #79c0ff;
+  font-weight: bold;
 }

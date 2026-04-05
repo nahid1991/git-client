@@ -13,7 +13,11 @@ contextBridge.exposeInMainWorld('gitAPI', {
     ipcRenderer.invoke('git:merge', path, branchName),
   rebaseBranch: (path: string, branchName: string): Promise<void> =>
     ipcRenderer.invoke('git:rebase', path, branchName),
-  getCommitDiff: (path: string, hash: string): Promise<string> =>
-    ipcRenderer.invoke('git:get-commit-diff', path, hash)
+  getCommitFiles: (path: string, hash: string): Promise<any[]> =>
+    ipcRenderer.invoke('git:get-commit-files', path, hash),
+  getFileDiff: (path: string, hash: string, filePath: string): Promise<string> =>
+    ipcRenderer.invoke('git:get-file-diff', path, hash, filePath),
+  getUncommittedFiles: (path: string): Promise<any[]> =>
+    ipcRenderer.invoke('git:get-uncommitted-files', path)
 })
 

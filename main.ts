@@ -102,11 +102,57 @@ app.whenReady().then(() => {
   )
 
   ipcMain.handle(
-    'git:get-commit-diff',
+    'git:get-file-diff',
+    async (_, repoPath: string, hash: string, filePath: string) => {
+      const git = simpleGit(repoPath)
+      if (hash === 'WIP') {
+         // View working directory changes for this file against HEAD
+         return await git.diff(['HEAD', '--', filePath])
+      } else {
+         // View exact patch for this commit without message metadata
+         return await git.raw(['log', '-1', '-p', '--format=', hash, '--', filePath])
+      }
+    }
+  )
+
+  ipcMain.handle(
+    'git:get-commit-files',
     async (_, repoPath: string, hash: string) => {
       const git = simpleGit(repoPath)
-      const diff = await git.show([hash, '--stat', '--format=']) // Only show the stat, empty format removes commit msg body
-      return diff
+      // --name-status returns a list of files and their statuses (e.g. M, A, D) without full text diff
+      const out = await git.raw(['show', '--name-status', '--format=', hash])
+
+      const files = out
+        .trim()
+        .split('\n')
+        .filter(Boolean)
+        .map((line) => {
+          const parts = line.split('\t')
+          if (parts.length >= 2) {
+            const statusStr = parts[0].trim()
+            const status = statusStr[0]
+            const path = parts[parts.length - 1].trim()
+            return { status, path }
+          }
+          return { status: 'U', path: line }
+        })
+      return files
+    }
+  )
+  ipcMain.handle(
+    'git:get-uncommitted-files',
+    async (_, repoPath: string) => {
+      const git = simpleGit(repoPath)
+      const status = await git.status()
+      const files: { status: string, path: string }[] = []
+      
+      status.modified.forEach(f => files.push({ status: 'M', path: f }))
+      status.created.forEach(f => files.push({ status: 'A', path: f }))
+      status.deleted.forEach(f => files.push({ status: 'D', path: f }))
+      status.not_added.forEach(f => files.push({ status: 'U', path: f }))
+      status.renamed.forEach(f => files.push({ status: 'R', path: f.to }))
+      
+      return files
     }
   )
 
